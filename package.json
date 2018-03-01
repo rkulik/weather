@@ -15,7 +15,7 @@
     "express",
     "weather"
   ],
-  "author": "René Kulik <info@renekulik.de>",
+  "author": "René Kulik <rene@kulik.io>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/rkulik/weather/issues"
