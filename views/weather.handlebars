@@ -1,0 +1,56 @@
+<div id="connection" class="connection disconnected">&#9679; connection</div>
+<h1>{{location}}</h1>
+<div id="today"></div>
+<div id="next-few-days" class="forecasts clearfix"></div>
+<div id="notification">No weather information</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    disconnected = () => {
+        document.getElementById('connection').classList.remove('connected');
+        document.getElementById('connection').classList.add('disconnected');
+    };
+
+    connected = () => {
+        document.getElementById('connection').classList.remove('disconnected');
+        document.getElementById('connection').classList.add('connected');
+    };
+
+    buildForecastsHTML = (forecast) => {
+        return '<div>'
+            + '<div id="date">' + forecast.date + '</div>'
+            + '<img src="http://l.yimg.com/a/i/us/we/52/' + forecast.code + '.gif" alt="' + forecast.text + '">'
+            + '<div id="temperatur">' + forecast.low + '°C - ' + forecast.high + '°C</div>'
+            + '</div>';
+    };
+
+    const socket = io();
+
+    socket.on('connect', () => {
+        connected();
+    });
+
+    socket.on('disconnect', () => {
+        disconnected();
+    });
+
+    socket.on('forecasts', (forecasts) => {
+        console.log('received forecasts');
+
+        const notification = document.getElementById('notification');
+        const today = document.getElementById('today');
+        const nextFewDays = document.getElementById('next-few-days');
+
+        notification.innerHTML = '';
+        today.innerHTML = '';
+        nextFewDays.innerHTML = '';
+
+        for (let i = 0; i < forecasts.length; i++) {
+            if (i === 0) {
+                today.insertAdjacentHTML('beforeend', buildForecastsHTML(forecasts[i]));
+            } else {
+                nextFewDays.insertAdjacentHTML('beforeend', buildForecastsHTML(forecasts[i]));
+            }
+        }
+    });
+</script>
